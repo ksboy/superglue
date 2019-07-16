@@ -309,6 +309,8 @@ def main():
 
                 # define a new function to compute loss values for both output_modes
                 logits = model(input_ids, token_type_ids=segment_ids, attention_mask=input_mask)
+                # print(input_ids)
+                # print(logits)
 
                 if output_mode == "classification":
                     loss_fct = CrossEntropyLoss()
@@ -423,7 +425,8 @@ def main():
 
             with torch.no_grad():
                 logits = model(input_ids, token_type_ids=segment_ids, attention_mask=input_mask)
-
+            
+            print(logits )
             # create eval loss and other metric required by the task
             if output_mode == "classification":
                 loss_fct = CrossEntropyLoss()
@@ -536,6 +539,8 @@ def main():
                 for key in sorted(result.keys()):
                     logger.info("  %s = %s", key, str(result[key]))
                     writer.write("%s = %s\n" % (key, str(result[key])))
+        
+        
 
 if __name__ == "__main__":
     main()

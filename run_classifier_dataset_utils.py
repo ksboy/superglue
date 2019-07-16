@@ -174,8 +174,18 @@ class CopaProcessor(DataProcessor):
             else:
                 label_0 = "not_causality"
                 label_1 = "causality"
+            
+            if line["question"]=="cause":
+                question="What was the cause of this?"
+            else:
+                question="What happened as a result?"
+            text_a = line["premise"] +" [SEP] "+ question
 
-            text_a = line["question"] + " [SEP] " + line["premise"]
+            #1: text_a = line["question"] + " [SEP] " + line["premise"]
+            #2: text_a = (line["question"]+' ')*10 + " [SEP] " + line["premise"]
+            #3: text_a = "what's the "+line["question"] + " fot this? [SEP] " + line["premise"]
+            #4: text_a = line["premise"]+" [SEP] what's the "+line["question"] + " fot this?" 
+            #5: 
 
             guid = "%s-%s" % (set_type, str(line["idx"]) + "_0")
             text_b = line["choice1"]

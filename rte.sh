@@ -4,7 +4,7 @@ python run_classifier.py  \
        --data_dir=../data-superglue/RTE  \
        --bert_model=../bert-base-cased-finetuned-mrpc/ \
        --task_name=rte \
-       --output_dir=./rte/ \
+       --output_dir=./outputs/rte/ \
        --cache_dir=./cache/  \
        --do_train \
        --do_eval  
