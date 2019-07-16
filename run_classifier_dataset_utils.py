@@ -167,14 +167,8 @@ class CopaProcessor(DataProcessor):
         """Creates examples for the training and dev sets."""
         examples = []
         for (i, line) in enumerate(lines):
-            label = line["label"]
-            if int(label)==0:
-                label_0 = "causality"
-                label_1 = "not_causality"
-            else:
-                label_0 = "not_causality"
-                label_1 = "causality"
-            
+            guid = "%s-%s" % (set_type, line["idx"]) 
+    
             if line["question"]=="cause":
                 question="What was the cause of this?"
             else:
@@ -185,19 +179,12 @@ class CopaProcessor(DataProcessor):
             #2: text_a = (line["question"]+' ')*10 + " [SEP] " + line["premise"]
             #3: text_a = "what's the "+line["question"] + " fot this? [SEP] " + line["premise"]
             #4: text_a = line["premise"]+" [SEP] what's the "+line["question"] + " fot this?" 
-            #5: 
+            #5: text_b = line["choice1"]+" [SEP] "+ line["choice2"]
 
-            guid = "%s-%s" % (set_type, str(line["idx"]) + "_0")
-            text_b = line["choice1"]
-            print(guid, text_a ,text_b, label_0)
+            text_b = line["choice1"]+" [SEP] "+ line["choice2"]
+            print(guid, text_a ,text_b, line["label"])
             examples.append(
-                InputExample(guid=guid, text_a=text_a, text_b=text_b, label=label_0))
-
-            guid = "%s-%s" % (set_type, str(line["idx"]) + "_1")
-            text_b = line["choice2"]
-            print(guid, text_a ,text_b, label_1)
-            examples.append(
-                InputExample(guid=guid, text_a=text_a, text_b=text_b, label=label_1))
+                InputExample(guid=guid, text_a=text_a, text_b=text_b, label=line["label"]))
 
         return examples
 
