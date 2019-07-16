@@ -7,4 +7,5 @@ python run_classifier.py  \
        --output_dir=./cb/ \
        --cache_dir=./cache/  \
        --do_train \
-       --do_eval
+       --do_eval 
+

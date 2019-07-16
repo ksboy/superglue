@@ -1,0 +1,126 @@
+root@48153f4f99fc:/data/houwei/superglue# bash rte.sh > log_rte
+07/15/2019 11:16:49 - INFO - __main__ -   device: cuda n_gpu: 4, distributed training: False, 16-bits training: False
+07/15/2019 11:16:49 - INFO - pytorch_pretrained_bert.tokenization -   loading vocabulary file ../bert-base-cased-finetuned-mrpc/vocab.txt
+07/15/2019 11:16:49 - INFO - pytorch_pretrained_bert.modeling -   loading weights file ../bert-base-cased-finetuned-mrpc/pytorch_model.bin
+07/15/2019 11:16:49 - INFO - pytorch_pretrained_bert.modeling -   loading configuration file ../bert-base-cased-finetuned-mrpc/config.json
+07/15/2019 11:16:49 - INFO - pytorch_pretrained_bert.modeling -   Model config {
+  "attention_probs_dropout_prob": 0.1,
+  "hidden_act": "gelu",
+  "hidden_dropout_prob": 0.1,
+  "hidden_size": 768,
+  "initializer_range": 0.02,
+  "intermediate_size": 3072,
+  "layer_norm_eps": 1e-12,
+  "max_position_embeddings": 512,
+  "num_attention_heads": 12,
+  "num_hidden_layers": 12,
+  "type_vocab_size": 2,
+  "vocab_size": 28996
+}
+
+07/15/2019 11:16:56 - INFO - run_classifier_dataset_utils -   Writing example 0 of 2490
+07/15/2019 11:16:56 - INFO - run_classifier_dataset_utils -   *** Example ***
+07/15/2019 11:16:56 - INFO - run_classifier_dataset_utils -   guid: train-0
+07/15/2019 11:16:56 - INFO - run_classifier_dataset_utils -   tokens: [CLS] No Weapons of Mass Des ##truction Found in Iraq Yet . [SEP] Weapons of Mass Des ##truction Found in Iraq . [SEP]
+07/15/2019 11:16:56 - INFO - run_classifier_dataset_utils -   input_ids: 101 1302 20263 1104 8718 14177 17993 17107 1107 5008 6355 119 102 20263 1104 8718 14177 17993 17107 1107 5008 119 102 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+07/15/2019 11:16:56 - INFO - run_classifier_dataset_utils -   input_mask: 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+07/15/2019 11:16:56 - INFO - run_classifier_dataset_utils -   segment_ids: 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+07/15/2019 11:16:56 - INFO - run_classifier_dataset_utils -   label: not_entailment (id = 1)
+07/15/2019 11:16:56 - INFO - run_classifier_dataset_utils -   *** Example ***
+07/15/2019 11:16:56 - INFO - run_classifier_dataset_utils -   guid: train-1
+07/15/2019 11:16:56 - INFO - run_classifier_dataset_utils -   tokens: [CLS] A place of sorrow , after Pope John Paul II died , became a place of celebration , as Roman Catholic faithful gathered in downtown Chicago to mark the installation of new Pope Benedict XVI . [SEP] Pope Benedict XVI is the new leader of the Roman Catholic Church . [SEP]
+07/15/2019 11:16:56 - INFO - run_classifier_dataset_utils -   input_ids: 101 138 1282 1104 17359 117 1170 4409 1287 1795 1563 1452 117 1245 170 1282 1104 7978 117 1112 2264 2336 12969 5260 1107 5215 2290 1106 4551 1103 8205 1104 1207 4409 12334 18406 119 102 4409 12334 18406 1110 1103 1207 2301 1104 1103 2264 2336 1722 119 102 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+07/15/2019 11:16:56 - INFO - run_classifier_dataset_utils -   input_mask: 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+07/15/2019 11:16:56 - INFO - run_classifier_dataset_utils -   segment_ids: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+07/15/2019 11:16:56 - INFO - run_classifier_dataset_utils -   label: entailment (id = 0)
+07/15/2019 11:16:56 - INFO - run_classifier_dataset_utils -   *** Example ***
+07/15/2019 11:16:56 - INFO - run_classifier_dataset_utils -   guid: train-2
+07/15/2019 11:16:56 - INFO - run_classifier_dataset_utils -   tokens: [CLS] Her ##ce ##pt ##in was already approved to treat the sick ##est breast cancer patients , and the company said , Monday , it will discuss with federal regulator ##s the possibility of pre ##s ##cribing the drug for more breast cancer patients . [SEP] Her ##ce ##pt ##in can be used to treat breast cancer . [SEP]
+07/15/2019 11:16:56 - INFO - run_classifier_dataset_utils -   input_ids: 101 1430 2093 6451 1394 1108 1640 4092 1106 7299 1103 4809 2556 7209 4182 4420 117 1105 1103 1419 1163 117 6356 117 1122 1209 6265 1114 2877 27335 1116 1103 5417 1104 3073 1116 27362 1103 3850 1111 1167 7209 4182 4420 119 102 1430 2093 6451 1394 1169 1129 1215 1106 7299 7209 4182 119 102 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+07/15/2019 11:16:56 - INFO - run_classifier_dataset_utils -   input_mask: 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+07/15/2019 11:16:56 - INFO - run_classifier_dataset_utils -   segment_ids: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+07/15/2019 11:16:56 - INFO - run_classifier_dataset_utils -   label: entailment (id = 0)
+07/15/2019 11:16:56 - INFO - run_classifier_dataset_utils -   *** Example ***
+07/15/2019 11:16:56 - INFO - run_classifier_dataset_utils -   guid: train-3
+07/15/2019 11:16:56 - INFO - run_classifier_dataset_utils -   tokens: [CLS] Ju ##die Vivian , chief executive at Pro ##M ##edic ##a , a medical service company that helps sustain the 2 - year - old Vietnam Heart Institute in Ho Chi Minh City ( formerly Saigon ) , said that so far about 1 , 500 children have received treatment . [SEP] The previous name of Ho Chi Minh City was Saigon . [SEP]
+07/15/2019 11:16:56 - INFO - run_classifier_dataset_utils -   input_ids: 101 23915 7782 14261 117 2705 3275 1120 5096 2107 24506 1161 117 170 2657 1555 1419 1115 6618 16974 1103 123 118 1214 118 1385 4357 4641 2024 1107 9800 11318 21481 1392 113 3147 27123 114 117 1163 1115 1177 1677 1164 122 117 2260 1482 1138 1460 3252 119 102 1109 2166 1271 1104 9800 11318 21481 1392 1108 27123 119 102 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+07/15/2019 11:16:56 - INFO - run_classifier_dataset_utils -   input_mask: 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+07/15/2019 11:16:56 - INFO - run_classifier_dataset_utils -   segment_ids: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+07/15/2019 11:16:56 - INFO - run_classifier_dataset_utils -   label: entailment (id = 0)
+07/15/2019 11:16:56 - INFO - run_classifier_dataset_utils -   *** Example ***
+07/15/2019 11:16:56 - INFO - run_classifier_dataset_utils -   guid: train-4
+07/15/2019 11:16:56 - INFO - run_classifier_dataset_utils -   tokens: [CLS] A man is due in court later charged with the murder 26 years ago of a teenager whose case was the first to be featured on BBC One ' s Crime ##watch . Cole ##tte Ara ##m , 16 , was walking to her boyfriend ' s house in Key ##worth , Nottinghamshire , on 30 October 1983 when she disappeared . Her body was later found in a field close to her home . Paul Stewart Hutchinson , 50 , has been charged with murder and is due before Nottingham magistrate ##s later . [SEP] Paul Stewart Hutchinson is accused of having stabbed a girl . [SEP]
+07/15/2019 11:16:56 - INFO - run_classifier_dataset_utils -   input_ids: 101 138 1299 1110 1496 1107 2175 1224 4601 1114 1103 3513 1744 1201 2403 1104 170 10674 2133 1692 1108 1103 1148 1106 1129 2081 1113 3173 1448 112 188 10725 21200 119 4922 3786 25692 1306 117 1479 117 1108 3179 1106 1123 6508 112 188 1402 1107 7443 4189 117 21942 117 1113 1476 1357 2278 1165 1131 4712 119 1430 1404 1108 1224 1276 1107 170 1768 1601 1106 1123 1313 119 1795 5272 18322 117 1851 117 1144 1151 4601 1114 3513 1105 1110 1496 1196 11330 20261 1116 1224 119 102 1795 5272 18322 1110 4806 1104 1515 13699 170 1873 119 102 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+07/15/2019 11:16:56 - INFO - run_classifier_dataset_utils -   input_mask: 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+07/15/2019 11:16:56 - INFO - run_classifier_dataset_utils -   segment_ids: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+07/15/2019 11:16:56 - INFO - run_classifier_dataset_utils -   label: not_entailment (id = 1)
+07/15/2019 11:16:59 - INFO - __main__ -     Saving train features into cached file ../data-superglue/RTE/train_bert-base-cased-finetuned-mrpc_128_rte
+07/15/2019 11:16:59 - INFO - __main__ -   ***** Running training *****
+07/15/2019 11:16:59 - INFO - __main__ -     Num examples = 2490
+07/15/2019 11:16:59 - INFO - __main__ -     Batch size = 32
+07/15/2019 11:16:59 - INFO - __main__ -     Num steps = 234
+Epoch: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████| 3/3 [01:50<00:00, 38.46s/it]
+07/15/2019 11:18:50 - INFO - pytorch_pretrained_bert.modeling -   loading weights file ./rte/pytorch_model.bin██| 78/78 [00:33<00:00,  2.33it/s]
+07/15/2019 11:18:50 - INFO - pytorch_pretrained_bert.modeling -   loading configuration file ./rte/config.json
+07/15/2019 11:18:50 - INFO - pytorch_pretrained_bert.modeling -   Model config {
+  "attention_probs_dropout_prob": 0.1,
+  "hidden_act": "gelu",
+  "hidden_dropout_prob": 0.1,
+  "hidden_size": 768,
+  "initializer_range": 0.02,
+  "intermediate_size": 3072,
+  "layer_norm_eps": 1e-12,
+  "max_position_embeddings": 512,
+  "num_attention_heads": 12,
+  "num_hidden_layers": 12,
+  "type_vocab_size": 2,
+  "vocab_size": 28996
+}
+
+07/15/2019 11:18:57 - INFO - pytorch_pretrained_bert.tokenization -   loading vocabulary file ./rte/vocab.txt
+07/15/2019 11:18:57 - INFO - run_classifier_dataset_utils -   Writing example 0 of 277
+07/15/2019 11:18:57 - INFO - run_classifier_dataset_utils -   *** Example ***
+07/15/2019 11:18:57 - INFO - run_classifier_dataset_utils -   guid: dev-0
+07/15/2019 11:18:57 - INFO - run_classifier_dataset_utils -   tokens: [CLS] Dana Reeve , the widow of the actor Christopher Reeve , has died of lung cancer at age 44 , according to the Christopher Reeve Foundation . [SEP] Christopher Reeve had an accident . [SEP]
+07/15/2019 11:18:57 - INFO - run_classifier_dataset_utils -   input_ids: 101 11422 26034 117 1103 8244 1104 1103 2811 4978 26034 117 1144 1452 1104 13093 4182 1120 1425 3140 117 2452 1106 1103 4978 26034 2974 119 102 4978 26034 1125 1126 4216 119 102 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+07/15/2019 11:18:57 - INFO - run_classifier_dataset_utils -   input_mask: 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+07/15/2019 11:18:57 - INFO - run_classifier_dataset_utils -   segment_ids: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+07/15/2019 11:18:57 - INFO - run_classifier_dataset_utils -   label: not_entailment (id = 1)
+07/15/2019 11:18:57 - INFO - run_classifier_dataset_utils -   *** Example ***
+07/15/2019 11:18:57 - INFO - run_classifier_dataset_utils -   guid: dev-1
+07/15/2019 11:18:57 - INFO - run_classifier_dataset_utils -   tokens: [CLS] Yet , we now are discovering that anti ##biotics are losing their effectiveness against illness . Disease - causing bacteria are m ##uta ##ting faster than we can come up with new anti ##biotics to fight the new variations . [SEP] Ba ##cter ##ia is winning the war against anti ##biotics . [SEP]
+07/15/2019 11:18:57 - INFO - run_classifier_dataset_utils -   input_ids: 101 6355 117 1195 1208 1132 15137 1115 2848 25523 1132 3196 1147 12949 1222 6946 119 20012 118 3989 10548 1132 182 15012 1916 4946 1190 1195 1169 1435 1146 1114 1207 2848 25523 1106 2147 1103 1207 9138 119 102 18757 25857 1465 1110 2183 1103 1594 1222 2848 25523 119 102 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+07/15/2019 11:18:57 - INFO - run_classifier_dataset_utils -   input_mask: 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+07/15/2019 11:18:57 - INFO - run_classifier_dataset_utils -   segment_ids: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+07/15/2019 11:18:57 - INFO - run_classifier_dataset_utils -   label: entailment (id = 0)
+07/15/2019 11:18:57 - INFO - run_classifier_dataset_utils -   *** Example ***
+07/15/2019 11:18:57 - INFO - run_classifier_dataset_utils -   guid: dev-2
+07/15/2019 11:18:57 - INFO - run_classifier_dataset_utils -   tokens: [CLS] Cairo is now home to some 15 million people - a b ##urge ##oning population that produces approximately 10 , 000 tonnes of rub ##bish per day , putting an enormous strain on public services . In the past 10 years , the government has tried hard to encourage private investment in the refuse sector , but some estimate 4 , 000 tonnes of waste is left behind every day , f ##ester ##ing in the heat as it waits for someone to clear it up . It is often the people in the poor ##est neighbourhood ##s that are worst affected . But in some areas they are fighting back . In [SEP] 15 million tonnes of rub ##bish are produced daily in Cairo . [SEP]
+07/15/2019 11:18:57 - INFO - run_classifier_dataset_utils -   input_ids: 101 11086 1110 1208 1313 1106 1199 1405 1550 1234 118 170 171 27793 10087 1416 1115 6570 2324 1275 117 1288 10992 1104 16259 26652 1679 1285 117 4518 1126 7883 10512 1113 1470 1826 119 1130 1103 1763 1275 1201 117 1103 1433 1144 1793 1662 1106 8343 2029 5151 1107 1103 10250 4291 117 1133 1199 10301 125 117 1288 10992 1104 5671 1110 1286 1481 1451 1285 117 175 12831 1158 1107 1103 3208 1112 1122 24344 1111 1800 1106 2330 1122 1146 119 1135 1110 1510 1103 1234 1107 1103 2869 2556 11685 1116 1115 1132 4997 4634 119 1252 1107 1199 1877 1152 1132 2935 1171 119 1130 102 1405 1550 10992 1104 16259 26652 1132 1666 3828 1107 11086 119 102
+07/15/2019 11:18:57 - INFO - run_classifier_dataset_utils -   input_mask: 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+07/15/2019 11:18:57 - INFO - run_classifier_dataset_utils -   segment_ids: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1
+07/15/2019 11:18:57 - INFO - run_classifier_dataset_utils -   label: not_entailment (id = 1)
+07/15/2019 11:18:57 - INFO - run_classifier_dataset_utils -   *** Example ***
+07/15/2019 11:18:57 - INFO - run_classifier_dataset_utils -   guid: dev-3
+07/15/2019 11:18:57 - INFO - run_classifier_dataset_utils -   tokens: [CLS] The Am ##ish community in Pennsylvania , which numbers about 55 , 000 , lives an a ##grarian lifestyle , s ##hun ##ning technological advances like electricity and automobiles . And many say their ins ##ular lifestyle gives them a sense that they are protected from the violence of American society . But as residents gathered near the school , some wearing traditional g ##ar ##b and arriving in horse - drawn bug ##gies , they said that sense of safety had been shattered . " If someone snaps and wants to do something stupid , there ' s no distance that ' s going to stop them , " said Jake [SEP] Pennsylvania has the biggest Am ##ish community in the U . S . [SEP]
+07/15/2019 11:18:57 - INFO - run_classifier_dataset_utils -   input_ids: 101 1109 7277 2944 1661 1107 2680 117 1134 2849 1164 3731 117 1288 117 2491 1126 170 25873 9897 117 188 17315 3381 12675 11823 1176 6495 1105 23338 119 1262 1242 1474 1147 22233 5552 9897 3114 1172 170 2305 1115 1152 1132 4921 1121 1103 4289 1104 1237 2808 119 1252 1112 3159 5260 1485 1103 1278 117 1199 3351 2361 176 1813 1830 1105 7190 1107 3241 118 3795 15430 19310 117 1152 1163 1115 2305 1104 3429 1125 1151 11670 119 107 1409 1800 22675 1105 3349 1106 1202 1380 4736 117 1175 112 188 1185 2462 1115 112 188 1280 1106 1831 1172 117 107 1163 4387 102 2680 1144 1103 4583 7277 2944 1661 1107 1103 158 119 156 119 102
+07/15/2019 11:18:57 - INFO - run_classifier_dataset_utils -   input_mask: 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+07/15/2019 11:18:57 - INFO - run_classifier_dataset_utils -   segment_ids: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+07/15/2019 11:18:57 - INFO - run_classifier_dataset_utils -   label: not_entailment (id = 1)
+  /15/2019 11:18:57 - INFO - run_classifier_dataset_utils -   *** Example ***
+07/15/2019 11:18:57 - INFO - run_classifier_dataset_utils -   guid: dev-4
+07/15/2019 11:18:57 - INFO - run_classifier_dataset_utils -   tokens: [CLS] Security forces were on high alert after an election campaign in which more than 1 , 000 people , including seven election candidates , have been killed . [SEP] Security forces were on high alert after a campaign marred by violence . [SEP]
+07/15/2019 11:18:57 - INFO - run_classifier_dataset_utils -   input_ids: 101 4354 2088 1127 1113 1344 10427 1170 1126 1728 2322 1107 1134 1167 1190 122 117 1288 1234 117 1259 1978 1728 4765 117 1138 1151 1841 119 102 4354 2088 1127 1113 1344 10427 1170 170 2322 27767 1118 4289 119 102 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+07/15/2019 11:18:57 - INFO - run_classifier_dataset_utils -   input_mask: 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+07/15/2019 11:18:57 - INFO - run_classifier_dataset_utils -   segment_ids: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+07/15/2019 11:18:57 - INFO - run_classifier_dataset_utils -   label: entailment (id = 0)
+07/15/2019 11:18:57 - INFO - __main__ -     Saving eval features into cached file ../data-superglue/RTE/dev_bert-base-cased-finetuned-mrpc_128_rte
+07/15/2019 11:18:57 - INFO - __main__ -   ***** Running evaluation *****
+07/15/2019 11:18:57 - INFO - __main__ -     Num examples = 277
+07/15/2019 11:18:57 - INFO - __main__ -     Batch size = 8
+Evaluating: 100%|███████████████████████████████████████████████████████████████████████████████████████████████| 35/35 [00:01<00:00, 23.42it/s]
+07/15/2019 11:18:58 - INFO - __main__ -   ***** Eval results *****
+07/15/2019 11:18:58 - INFO - __main__ -     acc = 0.5415162454873647
+07/15/2019 11:18:58 - INFO - __main__ -     eval_loss = 0.6892296518598284
+07/15/2019 11:18:58 - INFO - __main__ -     global_step = 234
+07/15/2019 11:18:58 - INFO - __main__ -     loss = 0.23214940841381365

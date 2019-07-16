@@ -7,4 +7,4 @@ python run_classifier.py  \
        --output_dir=./rte/ \
        --cache_dir=./cache/  \
        --do_train \
-       --do_eval
+       --do_eval  

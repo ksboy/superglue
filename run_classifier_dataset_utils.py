@@ -179,11 +179,13 @@ class CopaProcessor(DataProcessor):
 
             guid = "%s-%s" % (set_type, str(line["idx"]) + "_0")
             text_b = line["choice1"]
+            print(guid, text_a ,text_b, label_0)
             examples.append(
                 InputExample(guid=guid, text_a=text_a, text_b=text_b, label=label_0))
 
             guid = "%s-%s" % (set_type, str(line["idx"]) + "_1")
             text_b = line["choice2"]
+            print(guid, text_a ,text_b, label_1)
             examples.append(
                 InputExample(guid=guid, text_a=text_a, text_b=text_b, label=label_1))
 
@@ -240,8 +242,8 @@ def convert_examples_to_features(examples, label_list, max_seq_length,
         if tokens_b:
             tokens += tokens_b + ["[SEP]"]
             segment_ids += [1] * (len(tokens_b) + 1)
-        print(tokens)
-
+        
+        # print(tokens)
         input_ids = tokenizer.convert_tokens_to_ids(tokens)
 
         # The mask has 1 for real tokens and 0 for padding tokens. Only real
