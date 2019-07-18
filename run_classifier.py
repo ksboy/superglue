@@ -39,7 +39,7 @@ from pytorch_pretrained_bert.modeling import BertForSequenceClassification
 from pytorch_pretrained_bert.tokenization import BertTokenizer
 from pytorch_pretrained_bert.optimization import BertAdam, WarmupLinearSchedule
 
-from run_classifier_dataset_utils2 import processors, output_modes, convert_examples_to_features, compute_metrics
+from run_classifier_dataset_utils import processors, output_modes, convert_examples_to_features, compute_metrics
 
 if sys.version_info[0] == 2:
     import cPickle as pickle
