@@ -86,7 +86,7 @@ class DataProcessor(object):
 
 
 class RteProcessor(DataProcessor):
-    """Processor for the RTE data set (GLUE version)."""
+    """Processor for the RTE data set (SuperGLUE version)."""
 
     def get_train_examples(self, data_dir):
         """See base class."""
@@ -117,7 +117,7 @@ class RteProcessor(DataProcessor):
 
 
 class CbProcessor(DataProcessor):
-    """Processor for the RTE data set (GLUE version)."""
+    """Processor for the CB data set (SuperGLUE version)."""
 
     def get_train_examples(self, data_dir):
         """See base class."""
@@ -147,7 +147,7 @@ class CbProcessor(DataProcessor):
 
 
 class CopaProcessor(DataProcessor):
-    """Processor for the RTE data set (GLUE version)."""
+    """Processor for the COPA data set (SuperGLUE version)."""
 
     def get_train_examples(self, data_dir):
         """See base class."""
@@ -167,8 +167,14 @@ class CopaProcessor(DataProcessor):
         """Creates examples for the training and dev sets."""
         examples = []
         for (i, line) in enumerate(lines):
-            guid = "%s-%s" % (set_type, line["idx"]) 
-    
+            label = line["label"]
+            if int(label)==0:
+                label_0 = "causality"
+                label_1 = "not_causality"
+            else:
+                label_0 = "not_causality"
+                label_1 = "causality"
+            
             if line["question"]=="cause":
                 question="What was the cause of this?"
             else:
@@ -177,14 +183,21 @@ class CopaProcessor(DataProcessor):
 
             #1: text_a = line["question"] + " [SEP] " + line["premise"]
             #2: text_a = (line["question"]+' ')*10 + " [SEP] " + line["premise"]
-            #3: text_a = "what's the "+line["question"] + " fot this? [SEP] " + line["premise"]
-            #4: text_a = line["premise"]+" [SEP] what's the "+line["question"] + " fot this?" 
-            #5: text_b = line["choice1"]+" [SEP] "+ line["choice2"]
+            #3: text_a = question + " [SEP] "+ line["premise"]
+            #4: text_a = line["premise"] + " [SEP] "+ question
+            #5: text_b = line["choice1"]+" [SEP] "+line["choice2"]
 
-            text_b = line["choice1"]+" [SEP] "+ line["choice2"]
-            print(guid, text_a ,text_b, line["label"])
+            guid = "%s-%s" % (set_type, str(line["idx"]) + "_0")
+            text_b = line["choice1"]
+            # print(guid, text_a ,text_b, label_0)
             examples.append(
-                InputExample(guid=guid, text_a=text_a, text_b=text_b, label=line["label"]))
+                InputExample(guid=guid, text_a=text_a, text_b=text_b, label=label_0))
+
+            guid = "%s-%s" % (set_type, str(line["idx"]) + "_1")
+            text_b = line["choice2"]
+            # print(guid, text_a ,text_b, label_1)
+            examples.append(
+                InputExample(guid=guid, text_a=text_a, text_b=text_b, label=label_1))
 
         return examples
 
@@ -329,7 +342,7 @@ def compute_metrics(task_name, preds, labels):
     if task_name == "rte":
         return {"acc": simple_accuracy(preds, labels)}
     elif task_name == "cb":
-        return {"acc": simple_accuracy(preds, labels)}
+        return {"acc": acc_and_f1(preds, labels)}
     elif task_name == "copa":
         return {"acc": simple_accuracy(preds, labels)}
     else:
@@ -345,5 +358,5 @@ processors = {
 output_modes = {
     "rte": "classification",
     "cb": "classification",
-    "copa":"classification",
+    "copa":"regression",
 }
