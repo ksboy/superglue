@@ -71,6 +71,10 @@ class DataProcessor(object):
         """Gets a collection of `InputExample`s for the dev set."""
         raise NotImplementedError()
 
+    def get_test_examples(self, data_dir):
+        """Gets a collection of `InputExample`s for the test set."""
+        raise NotImplementedError()
+
     def get_labels(self):
         """Gets the list of labels for this data set."""
         raise NotImplementedError()
@@ -97,6 +101,11 @@ class RteProcessor(DataProcessor):
         """See base class."""
         return self._create_examples(
             self._read_json(os.path.join(data_dir, "val.jsonl")), "dev")
+        
+    def get_test_examples(self, data_dir):
+        """See base class."""
+        return self._create_examples(
+            self._read_json(os.path.join(data_dir, "test.jsonl")), "test")
 
     def get_labels(self):
         """See base class."""
@@ -109,7 +118,10 @@ class RteProcessor(DataProcessor):
             guid = "%s-%s" % (set_type, line["idx"])
             text_a = line["premise"]
             text_b = line["hypothesis"]
-            label = line["label"]
+            if set_type == "test":
+                label = "entailment"
+            else:
+                label = line["label"]
             examples.append(
                 InputExample(guid=guid, text_a=text_a, text_b=text_b, label=label))
         return examples
@@ -128,6 +140,11 @@ class CbProcessor(DataProcessor):
         """See base class."""
         return self._create_examples(
             self._read_json(os.path.join(data_dir, "val.jsonl")), "dev")
+        
+    def get_test_examples(self, data_dir):
+        """See base class."""
+        return self._create_examples(
+            self._read_json(os.path.join(data_dir, "test.jsonl")), "test")
 
     def get_labels(self):
         """See base class."""
@@ -140,7 +157,10 @@ class CbProcessor(DataProcessor):
             guid = "%s-%s" % (set_type, line["idx"])
             text_a = line["premise"]
             text_b = line["hypothesis"]
-            label = line["label"]
+            if set_type == "test":
+                label = "entailment"
+            else:
+                label = line["label"]
             examples.append(
                 InputExample(guid=guid, text_a=text_a, text_b=text_b, label=label))
         return examples
@@ -158,6 +178,11 @@ class CopaProcessor(DataProcessor):
         """See base class."""
         return self._create_examples(
             self._read_json(os.path.join(data_dir, "val.jsonl")), "dev")
+    
+    def get_test_examples(self, data_dir):
+        """See base class."""
+        return self._create_examples(
+            self._read_json(os.path.join(data_dir, "test.jsonl")), "test")
 
     def get_labels(self):
         """See base class."""
@@ -167,7 +192,10 @@ class CopaProcessor(DataProcessor):
         """Creates examples for the training and dev sets."""
         examples = []
         for (i, line) in enumerate(lines):
-            label = line["label"]
+            if set_type == "test":
+                label = "0"
+            else:
+                label = line["label"]
             if int(label)==0:
                 label_0 = "causality"
                 label_1 = "not_causality"

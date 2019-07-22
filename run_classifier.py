@@ -78,8 +78,7 @@ def main():
 
     ## Other parameters
     parser.add_argument("--pop_classifier_layer",
-                        default=False,
-                        type=bool,
+                        action='store_true',
                         help="pop classifier layer")
     parser.add_argument("--cache_dir",
                         default="",
@@ -97,6 +96,9 @@ def main():
     parser.add_argument("--do_eval",
                         action='store_true',
                         help="Whether to run eval on the dev set.")
+    parser.add_argument("--do_predict",
+                        action='store_true',
+                        help="Whether to run predict on the test set.")           
     parser.add_argument("--do_lower_case",
                         action='store_true',
                         help="Set this flag if you are using an uncased model.")
@@ -108,6 +110,10 @@ def main():
                         default=8,
                         type=int,
                         help="Total batch size for eval.")
+    parser.add_argument("--predict_batch_size",
+                        default=8,
+                        type=int,
+                        help="Total batch size for predict.")
     parser.add_argument("--learning_rate",
                         default=5e-5,
                         type=float,
@@ -188,8 +194,8 @@ def main():
     if n_gpu > 0:
         torch.cuda.manual_seed_all(args.seed)
 
-    if not args.do_train and not args.do_eval:
-        raise ValueError("At least one of `do_train` or `do_eval` must be True.")
+    if not args.do_train and not args.do_eval and not args.do_predict:
+        raise ValueError("At least one of `do_train`, `do_eval` or `do_predict` must be True.")
 
     if os.path.exists(args.output_dir) and os.listdir(args.output_dir) and args.do_train and not args.overwrite_output_dir:
         raise ValueError("Output directory ({}) already exists and is not empty.".format(args.output_dir))
@@ -210,6 +216,7 @@ def main():
     if args.local_rank not in [-1, 0]:
         torch.distributed.barrier()  # Make sure only the first process in distributed training will download model & vocab
     tokenizer = BertTokenizer.from_pretrained(args.bert_model, do_lower_case=args.do_lower_case)
+    print(args.pop_classifier_layer)
     model = BertForSequenceClassification.from_pretrained(args.bert_model, num_labels=num_labels, pop_classifier_layer=args.pop_classifier_layer)
     if args.local_rank == 0:
         torch.distributed.barrier()
@@ -432,8 +439,9 @@ def main():
             with torch.no_grad():
                 logits = model(input_ids, token_type_ids=segment_ids, attention_mask=input_mask)
             
-            # print(logits )
-            # print(label_ids)
+            print(logits )
+            print(label_ids)
+            print(logits.view(-1, num_labels), label_ids.view(-1))
             # create eval loss and other metric required by the task
             if output_mode == "classification":
                 loss_fct = CrossEntropyLoss()
@@ -496,7 +504,124 @@ def main():
             for key in sorted(result.keys()):
                 logger.info("  %s = %s", key, str(result[key]))
                 writer.write("%s = %s\n" % (key, str(result[key])))
+    
+    ### Prediction
+    if args.do_predict and (args.local_rank == -1 or torch.distributed.get_rank() == 0):
+        predict_examples = processor.get_test_examples(args.data_dir)
+        cached_predict_features_file = os.path.join(args.data_dir, 'predict_{0}_{1}_{2}'.format(
+            list(filter(None, args.bert_model.split('/'))).pop(),
+                        str(args.max_seq_length),
+                        str(task_name)))
+        try:
+            with open(cached_predict_features_file, "rb") as reader:
+                predict_features = pickle.load(reader)
+        except:
+            predict_features = convert_examples_to_features(
+                predict_examples, label_list, args.max_seq_length, tokenizer, output_mode)
+            if args.local_rank == -1 or torch.distributed.get_rank() == 0:
+                logger.info("  Saving predict features into cached file %s", cached_predict_features_file)
+                with open(cached_predict_features_file, "wb") as writer:
+                    pickle.dump(predict_features, writer)
 
+
+        logger.info("***** Running prediction *****")
+        logger.info("  Num examples = %d", len(predict_examples))
+        logger.info("  Batch size = %d", args.predict_batch_size)
+        all_input_ids = torch.tensor([f.input_ids for f in predict_features], dtype=torch.long)
+        all_input_mask = torch.tensor([f.input_mask for f in predict_features], dtype=torch.long)
+        all_segment_ids = torch.tensor([f.segment_ids for f in predict_features], dtype=torch.long)
+
+        if output_mode == "classification":
+            all_label_ids = torch.tensor([f.label_id for f in predict_features], dtype=torch.long)
+        elif output_mode == "regression":
+            all_label_ids = torch.tensor([f.label_id for f in predict_features], dtype=torch.float)
+
+        predict_data = TensorDataset(all_input_ids, all_input_mask, all_segment_ids, all_label_ids)
+        # Run prediction for full data
+        if args.local_rank == -1:
+            predict_sampler = SequentialSampler(predict_data)
+        else:
+            predict_sampler = DistributedSampler(predict_data)  # Note that this sampler samples randomly
+        predict_dataloader = DataLoader(predict_data, sampler=predict_sampler, batch_size=args.predict_batch_size)
+
+        model.eval()
+        # predict_loss = 0
+        # nb_predict_steps = 0
+        preds = []
+        out_label_ids = None
+        for input_ids, input_mask, segment_ids, label_ids in tqdm(predict_dataloader, desc="predicting"):
+            input_ids = input_ids.to(device)
+            input_mask = input_mask.to(device)
+            segment_ids = segment_ids.to(device)
+            label_ids = label_ids.to(device)
+        
+            with torch.no_grad():
+                logits = model(input_ids, token_type_ids=segment_ids, attention_mask=input_mask)
+            
+            print(logits )
+            print(label_ids)
+            # create eval loss and other metric required by the task
+            # if output_mode == "classification":
+            #     loss_fct = CrossEntropyLoss()
+            #     tmp_eval_loss = loss_fct(logits.view(-1, num_labels), label_ids.view(-1))
+            # elif output_mode == "regression":
+            #     loss_fct = MSELoss()
+            #     tmp_eval_loss = loss_fct(logits.view(-1), label_ids.view(-1))
+            # 
+            # eval_loss += tmp_eval_loss.mean().item()
+            # nb_predict_steps += 1
+            if len(preds) == 0:
+                preds.append(logits.detach().cpu().numpy())
+                # out_label_ids = label_ids.detach().cpu().numpy()
+            else:
+                preds[0] = np.append(
+                    preds[0], logits.detach().cpu().numpy(), axis=0)
+                # out_label_ids = np.append(
+                    # out_label_ids, label_ids.detach().cpu().numpy(), axis=0)
+        # 
+        # eval_loss = eval_loss / nb_eval_steps
+
+        preds = preds[0]
+        print(preds)
+
+        if task_name == "copa":
+            preds = softmax(preds,axis=1)
+            print(preds)
+            results=[]
+            for i in range(int(len(preds)/2)):
+                    if preds[2*i][0]>=preds[2*i+1][0]:
+                        results.append(0)
+                    else:
+                        results.append(1)
+            preds= results
+            label_map = {i : i for i in range(2)}
+        else:
+            if output_mode == "classification":
+                preds = np.argmax(preds, axis=1)
+            elif output_mode == "regression":
+                preds = np.squeeze(preds)
+            label_map = {i : label for i, label in enumerate(label_list)}
+
+        print(preds)
+
+        # result = compute_metrics(task_name, preds, out_label_ids)
+
+        # loss = tr_loss/global_step if args.do_train else None
+
+        # result['eval_loss'] = eval_loss
+        # result['global_step'] = global_step
+        # result['loss'] = loss
+
+        output_predict_file = os.path.join(args.output_dir, "predict_results.txt")
+        with open(output_predict_file, "w") as writer:
+            logger.info("***** Predict results *****")
+            for i in range(len(preds)):
+                label_i = label_map[preds[i]]
+                # json_i= "\"idx: %d, \"label\": \"label_i\""
+                writer.write("{\"idx\": %d, \"label\": \"%s\"}\n"%(i,label_i))
+            # for key in sorted(result.keys()):
+        #         logger.info("  %s = %s", key, str(result[key]))
+        #         writer.write("%s = %s\n" % (key, str(result[key])))
         
         
 

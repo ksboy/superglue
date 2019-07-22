@@ -526,6 +526,7 @@ def main():
                 logits = model(input_ids, segment_ids, input_mask)
 
             logits = logits.detach().cpu().numpy()
+            print(logits, label_ids)
             label_ids = label_ids.to('cpu').numpy()
             tmp_eval_accuracy = accuracy(logits, label_ids)
 

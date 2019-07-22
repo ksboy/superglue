@@ -1,8 +1,6 @@
 import sys
 import pandas as pd
 import json, csv
-from pytorch_pretrained_bert.file_utils import WEIGHTS_NAME, CONFIG_NAME
-from pytorch_pretrained_bert.modeling import BertForSequenceClassification
 
 def json2tsv1(inf, outf):
     pd.read_json(inf).to_csv(outf, sep='\t', index=False)
