@@ -77,6 +77,10 @@ def main():
                         help="The output directory where the model predictions and checkpoints will be written.")
 
     ## Other parameters
+    parser.add_argument("--loss_weight",
+                        default=None,
+                        type=str,
+                        help="The Loss Weight.")
     parser.add_argument("--pop_classifier_layer",
                         action='store_true',
                         help="pop classifier layer")
@@ -216,7 +220,7 @@ def main():
     if args.local_rank not in [-1, 0]:
         torch.distributed.barrier()  # Make sure only the first process in distributed training will download model & vocab
     tokenizer = BertTokenizer.from_pretrained(args.bert_model, do_lower_case=args.do_lower_case)
-    print(args.pop_classifier_layer)
+    print("pop_classifier_layer", args.pop_classifier_layer)
     model = BertForSequenceClassification.from_pretrained(args.bert_model, num_labels=num_labels, pop_classifier_layer=args.pop_classifier_layer)
     if args.local_rank == 0:
         torch.distributed.barrier()
@@ -231,6 +235,8 @@ def main():
                                                           find_unused_parameters=True)
     elif n_gpu > 1:
         model = torch.nn.DataParallel(model)
+    
+    print("loss_weight", args.loss_weight)
 
     global_step = 0
     nb_tr_steps = 0
@@ -327,7 +333,11 @@ def main():
                 # print(label_ids)
 
                 if output_mode == "classification":
-                    loss_fct = CrossEntropyLoss()
+                    if args.loss_weight == None:
+                        loss_fct = CrossEntropyLoss()
+                    else:
+                        loss_weight= [int(_) for _ in args.loss_weight.split(",")]
+                        loss_fct = CrossEntropyLoss(torch.FloatTensor(loss_weight).cuda())
                     loss = loss_fct(logits.view(-1, num_labels), label_ids.view(-1))
                 elif output_mode == "regression":
                     loss_fct = MSELoss()
@@ -444,7 +454,11 @@ def main():
             print(logits.view(-1, num_labels), label_ids.view(-1))
             # create eval loss and other metric required by the task
             if output_mode == "classification":
-                loss_fct = CrossEntropyLoss()
+                if args.loss_weight == None:
+                    loss_fct = CrossEntropyLoss()
+                else:
+                    loss_weight= [int(_) for _ in args.loss_weight.split(",")]
+                    loss_fct = CrossEntropyLoss(torch.FloatTensor(loss_weight).cuda())
                 tmp_eval_loss = loss_fct(logits.view(-1, num_labels), label_ids.view(-1))
             elif output_mode == "regression":
                 loss_fct = MSELoss()
