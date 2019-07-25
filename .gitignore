@@ -3,8 +3,10 @@ __pycache__/
 *.py[cod]
 *$py.class
 core.*
+
 .idea/
 cache/
 outputs/
+proc_data/
 runs/
 logs/
