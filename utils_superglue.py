@@ -21,11 +21,12 @@ import csv
 import logging
 import os
 import sys
-import json
+from io import open
 
 from scipy.stats import pearsonr, spearmanr
 from sklearn.metrics import matthews_corrcoef, f1_score
 
+import json
 logger = logging.getLogger(__name__)
 
 
@@ -71,10 +72,6 @@ class DataProcessor(object):
         """Gets a collection of `InputExample`s for the dev set."""
         raise NotImplementedError()
 
-    def get_test_examples(self, data_dir):
-        """Gets a collection of `InputExample`s for the test set."""
-        raise NotImplementedError()
-
     def get_labels(self):
         """Gets the list of labels for this data set."""
         raise NotImplementedError()
@@ -86,7 +83,7 @@ class DataProcessor(object):
             line = json.loads(line)
             lines.append(line)
         return lines
-
+    
     @classmethod
     def _read_tsv(cls, input_file, quotechar=None):
         """Reads a tab separated value file."""
@@ -98,7 +95,6 @@ class DataProcessor(object):
                     line = list(unicode(cell, 'utf-8') for cell in line)
                 lines.append(line)
             return lines
-
 
 
 class RteProcessor(DataProcessor):
@@ -242,75 +238,20 @@ class CopaProcessor(DataProcessor):
         return examples
 
 
-class QnliProcessor(DataProcessor):
-    """Processor for the QNLI data set (GLUE version)."""
-
-    def get_train_examples(self, data_dir):
-        """See base class."""
-        return self._create_examples(
-            self._read_tsv(os.path.join(data_dir, "train.tsv")), "train")
-
-    def get_dev_examples(self, data_dir):
-        """See base class."""
-        return self._create_examples(
-            self._read_tsv(os.path.join(data_dir, "dev.tsv")), 
-            "dev_matched")
-
-    def get_labels(self):
-        """See base class."""
-        return ["entailment", "not_entailment"]
-
-    def _create_examples(self, lines, set_type):
-        """Creates examples for the training and dev sets."""
-        examples = []
-        for (i, line) in enumerate(lines):
-            if i == 0:
-                continue
-            guid = "%s-%s" % (set_type, line[0])
-            text_a = line[1]
-            text_b = line[2]
-            label = line[-1]
-            examples.append(
-                InputExample(guid=guid, text_a=text_a, text_b=text_b, label=label))
-        return examples
-
-
-class Mnli2Processor(DataProcessor):
-    """Processor for the MultiNLI data set (GLUE version)."""
-
-    def get_train_examples(self, data_dir):
-        """See base class."""
-        return self._create_examples(
-            self._read_tsv(os.path.join(data_dir, "train.tsv")), "train")
-
-    def get_dev_examples(self, data_dir):
-        """See base class."""
-        return self._create_examples(
-            self._read_tsv(os.path.join(data_dir, "dev_matched.tsv")),
-            "dev_matched")
-
-    def get_labels(self):
-        """See base class."""
-        return ["contradiction", "entailment"]
-
-    def _create_examples(self, lines, set_type):
-        """Creates examples for the training and dev sets."""
-        examples = []
-        for (i, line) in enumerate(lines):
-            if i == 0 or line[-1]=="neutral":
-                continue
-            guid = "%s-%s" % (set_type, line[0])
-            text_a = line[8]
-            text_b = line[9]
-            label = line[-1]
-            examples.append(
-                InputExample(guid=guid, text_a=text_a, text_b=text_b, label=label))
-        return examples
-
 
 def convert_examples_to_features(examples, label_list, max_seq_length,
-                                 tokenizer, output_mode):
-    """Loads a data file into a list of `InputBatch`s."""
+                                 tokenizer, output_mode,
+                                 cls_token_at_end=False, pad_on_left=False,
+                                 cls_token='[CLS]', sep_token='[SEP]', pad_token=0,
+                                 sequence_a_segment_id=0, sequence_b_segment_id=1,
+                                 cls_token_segment_id=1, pad_token_segment_id=0,
+                                 mask_padding_with_zero=True):
+    """ Loads a data file into a list of `InputBatch`s
+        `cls_token_at_end` define the location of the CLS token:
+            - False (Default, BERT/XLM pattern): [CLS] + A + [SEP] + B + [SEP]
+            - True (XLNet/GPT pattern): A + [SEP] + B + [SEP] + [CLS]
+        `cls_token_segment_id` define the segment id associated to the CLS token (0 for BERT, 2 for XLNet)
+    """
 
     label_map = {label : i for i, label in enumerate(label_list)}
 
@@ -336,10 +277,10 @@ def convert_examples_to_features(examples, label_list, max_seq_length,
         # The convention in BERT is:
         # (a) For sequence pairs:
         #  tokens:   [CLS] is this jack ##son ##ville ? [SEP] no it is not . [SEP]
-        #  type_ids: 0   0  0    0    0     0       0 0    1  1  1  1   1 1
+        #  type_ids:   0   0  0    0    0     0       0   0   1  1  1  1   1   1
         # (b) For single sequences:
         #  tokens:   [CLS] the dog is hairy . [SEP]
-        #  type_ids: 0   0   0   0  0     0 0
+        #  type_ids:   0   0   0   0  0     0   0
         #
         # Where "type_ids" are used to indicate whether this is the first
         # sequence or the second sequence. The embedding vectors for `type=0` and
@@ -351,26 +292,36 @@ def convert_examples_to_features(examples, label_list, max_seq_length,
         # For classification tasks, the first vector (corresponding to [CLS]) is
         # used as as the "sentence vector". Note that this only makes sense because
         # the entire model is fine-tuned.
-        tokens = ["[CLS]"] + tokens_a + ["[SEP]"]
-        segment_ids = [0] * len(tokens)
+        tokens = tokens_a + [sep_token]
+        segment_ids = [sequence_a_segment_id] * len(tokens)
 
-        # print(tokens)
         if tokens_b:
-            tokens += tokens_b + ["[SEP]"]
-            segment_ids += [1] * (len(tokens_b) + 1)
-        
-        # print(tokens)
+            tokens += tokens_b + [sep_token]
+            segment_ids += [sequence_b_segment_id] * (len(tokens_b) + 1)
+
+        if cls_token_at_end:
+            tokens = tokens + [cls_token]
+            segment_ids = segment_ids + [cls_token_segment_id]
+        else:
+            tokens = [cls_token] + tokens
+            segment_ids = [cls_token_segment_id] + segment_ids
+
         input_ids = tokenizer.convert_tokens_to_ids(tokens)
 
         # The mask has 1 for real tokens and 0 for padding tokens. Only real
         # tokens are attended to.
-        input_mask = [1] * len(input_ids)
+        input_mask = [1 if mask_padding_with_zero else 0] * len(input_ids)
 
         # Zero-pad up to the sequence length.
-        padding = [0] * (max_seq_length - len(input_ids))
-        input_ids += padding
-        input_mask += padding
-        segment_ids += padding
+        padding_length = max_seq_length - len(input_ids)
+        if pad_on_left:
+            input_ids = ([pad_token] * padding_length) + input_ids
+            input_mask = ([0 if mask_padding_with_zero else 1] * padding_length) + input_mask
+            segment_ids = ([pad_token_segment_id] * padding_length) + segment_ids
+        else:
+            input_ids = input_ids + ([pad_token] * padding_length)
+            input_mask = input_mask + ([0 if mask_padding_with_zero else 1] * padding_length)
+            segment_ids = segment_ids + ([pad_token_segment_id] * padding_length)
 
         assert len(input_ids) == max_seq_length
         assert len(input_mask) == max_seq_length
@@ -390,8 +341,7 @@ def convert_examples_to_features(examples, label_list, max_seq_length,
                     [str(x) for x in tokens]))
             logger.info("input_ids: %s" % " ".join([str(x) for x in input_ids]))
             logger.info("input_mask: %s" % " ".join([str(x) for x in input_mask]))
-            logger.info(
-                    "segment_ids: %s" % " ".join([str(x) for x in segment_ids]))
+            logger.info("segment_ids: %s" % " ".join([str(x) for x in segment_ids]))
             logger.info("label: %s (id = %d)" % (example.label, label_id))
 
         features.append(
@@ -425,7 +375,7 @@ def simple_accuracy(preds, labels):
 
 def acc_and_f1(preds, labels):
     acc = simple_accuracy(preds, labels)
-    f1 = f1_score(y_true=labels, y_pred=preds,average='macro')
+    f1 = f1_score(y_true=labels, y_pred=preds, average='macro')
     return {
         "acc": acc,
         "f1": f1,
@@ -445,32 +395,29 @@ def pearson_and_spearman(preds, labels):
 
 def compute_metrics(task_name, preds, labels):
     assert len(preds) == len(labels)
-    if task_name == "rte":
+    if task_name == "copa":
+        return {"acc": simple_accuracy(labels, preds)}
+    elif task_name == "rte":
         return {"acc": simple_accuracy(preds, labels)}
     elif task_name == "cb":
-        return {"acc": acc_and_f1(preds, labels)}
-    elif task_name == "copa":
-        return {"acc": simple_accuracy(preds, labels)}
-    elif task_name == "qnli":
-        return {"acc": simple_accuracy(preds, labels)}
-    elif task_name == "mnli2":
-        return {"acc": simple_accuracy(preds, labels)}
+        return acc_and_f1(preds, labels)
     else:
         raise KeyError(task_name)
 
 processors = {
-
-    "rte": RteProcessor,
     "cb": CbProcessor,
-    "copa":CopaProcessor,
-    "qnli":QnliProcessor,
-    "mnli2":Mnli2Processor,
+    "copa": CopaProcessor,
+    "rte": RteProcessor,
 }
 
 output_modes = {
     "rte": "classification",
+    "copa": "classification",
     "cb": "classification",
-    "copa":"classification",
-    "qnli":"classification",
-    "mnli2":"classification",
+}
+
+GLUE_TASKS_NUM_LABELS = {
+    "copa": 2,
+    "cb": 3,
+    "rte": 2,
 }
