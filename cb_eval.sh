@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 CUDA_VISIBLE_DEVICES=2,3 python run_superglue.py \
     --model_type=xlnet \
-    --model_name_or_path=./proc_data/cb20/ \
+    --model_name_or_path=./outputs/cb20/ \
     --do_eval   \
     --task_name=cb  \
     --data_dir=../data-superglue/CB \

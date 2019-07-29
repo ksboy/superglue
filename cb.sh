@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# train_size =250  steps_per_epoch =31.25
+# train_size =250  sum_batch_size = 16 steps_per_epoch =16  sum_steps= 480
 
 
-CUDA_VISIBLE_DEVICES=2,3 python run_superglue.py \
+CUDA_VISIBLE_DEVICES=0,2 python run_superglue.py \
     --model_type=xlnet \
-    --model_name_or_path=../xlnet-large-cased-mnli/checkpoint-50000 \
+    --model_name_or_path=../xlnet-large-cased \
     --do_train  \
     --do_eval   \
     --save_steps=60 \
@@ -13,13 +13,13 @@ CUDA_VISIBLE_DEVICES=2,3 python run_superglue.py \
     --evaluate_during_training  \
     --task_name=cb  \
     --data_dir=../data-superglue/CB \
-    --output_dir=./proc_data/cb24   \
+    --output_dir=./outputs/cb26   \
     --cache_dir=./cache \
     --max_seq_length=128   \
-    --per_gpu_eval_batch_size=8   \
-    --per_gpu_train_batch_size=8   \
+    --per_gpu_eval_batch_size=12   \
+    --per_gpu_train_batch_size=12   \
     --learning_rate=1e-5 \
-    --num_train_epochs=30.0
+    --num_train_epochs=40.0
     # --max_steps= 
     # --tokenizer_name=xlnet_large_cased  \
     # --gradient_accumulation_steps=1 \
