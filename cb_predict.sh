@@ -2,7 +2,7 @@
 
 python run_classifier.py  \
        --data_dir=../data-superglue/CB  \
-       --bert_model=./outputs/cb12/ \
+       --bert_model=./outputs/cb15_remain/ \
        --task_name=cb \
        --output_dir=./outputs/cb_predict/ \
        --cache_dir=./cache/  \
