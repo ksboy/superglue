@@ -181,8 +181,8 @@ def train(args, train_dataset, model, tokenizer):
 
 def evaluate(args, model, tokenizer, prefix=""):
     # Loop to handle MNLI double evaluation (matched, mis-matched)
-    eval_task_names = ("mnli", "mnli-mm") if args.task_name == "mnli" else (args.task_name,)
-    eval_outputs_dirs = (args.output_dir, args.output_dir + '-MM') if args.task_name == "mnli" else (args.output_dir,)
+    eval_task_names =  (args.task_name,)
+    eval_outputs_dirs = (args.output_dir,)
 
     results = {}
     for eval_task, eval_output_dir in zip(eval_task_names, eval_outputs_dirs):
@@ -242,13 +242,81 @@ def evaluate(args, model, tokenizer, prefix=""):
 
     return results
 
+def predict(args, model, tokenizer, prefix=""):
+    # Loop to handle MNLI double evaluation (matched, mis-matched)
+    eval_task_names =  (args.task_name,)
+    eval_outputs_dirs = (args.output_dir,)
 
-def load_and_cache_examples(args, task, tokenizer, evaluate=False):
+    for eval_task, eval_output_dir in zip(eval_task_names, eval_outputs_dirs):
+        eval_dataset = load_and_cache_examples(args, eval_task, tokenizer, predict=True)
+
+        if not os.path.exists(eval_output_dir) and args.local_rank in [-1, 0]:
+            os.makedirs(eval_output_dir)
+
+        args.eval_batch_size = args.per_gpu_eval_batch_size * max(1, args.n_gpu)
+        # Note that DistributedSampler samples randomly
+        eval_sampler = SequentialSampler(eval_dataset) if args.local_rank == -1 else DistributedSampler(eval_dataset)
+        eval_dataloader = DataLoader(eval_dataset, sampler=eval_sampler, batch_size=args.eval_batch_size)
+
+        # Eval!
+        logger.info("***** Running prediction {} *****".format(prefix))
+        logger.info("  Num examples = %d", len(eval_dataset))
+        logger.info("  Batch size = %d", args.eval_batch_size)
+        eval_loss = 0.0
+        nb_eval_steps = 0
+        preds = None
+        out_label_ids = None
+        for batch in tqdm(eval_dataloader, desc="Evaluating"):
+            model.eval()
+            batch = tuple(t.to(args.device) for t in batch)
+
+            with torch.no_grad():
+                inputs = {'input_ids':      batch[0],
+                          'attention_mask': batch[1],
+                          'token_type_ids': batch[2] if args.model_type in ['bert', 'xlnet'] else None,  # XLM don't use segment_ids
+                          'labels':         batch[3]}
+                outputs = model(**inputs)
+                tmp_eval_loss, logits = outputs[:2]
+
+                eval_loss += tmp_eval_loss.mean().item()
+            nb_eval_steps += 1
+            if preds is None:
+                preds = logits.detach().cpu().numpy()
+                out_label_ids = inputs['labels'].detach().cpu().numpy()
+            else:
+                preds = np.append(preds, logits.detach().cpu().numpy(), axis=0)
+                out_label_ids = np.append(out_label_ids, inputs['labels'].detach().cpu().numpy(), axis=0)
+
+        eval_loss = eval_loss / nb_eval_steps
+        if args.output_mode == "classification":
+            preds = np.argmax(preds, axis=1)
+        elif args.output_mode == "regression":
+            preds = np.squeeze(preds)
+        
+        output_pred_file = os.path.join(eval_output_dir, "pred_results.txt")
+        with open(output_pred_file, "w") as writer:
+            logger.info("***** Pred results {} *****".format(prefix))
+            label_list  =processors[args.task_name]().get_labels()
+            # print(label_list)
+            for i in range(len(preds)):
+                label_i = label_list[preds[i]]
+                # json_i= "\"idx: %d, \"label\": \"label_i\""
+                writer.write("{\"idx\": %d, \"label\": \"%s\"}\n"%(i,label_i))
+
+    return preds
+
+def load_and_cache_examples(args, task, tokenizer, evaluate=False, predict=False):
     processor = processors[task]()
     output_mode = output_modes[task]
     # Load data features from cache or dataset file
+    if predict:
+        tag = 'test'
+    elif evaluate:
+        tag = 'dev'
+    else:
+        tag = 'train'
     cached_features_file = os.path.join(args.data_dir, 'cached_{}_{}_{}_{}'.format(
-        'dev' if evaluate else 'train',
+        tag,
         list(filter(None, args.model_name_or_path.split('/'))).pop(),
         str(args.max_seq_length),
         str(task)))
@@ -258,7 +326,12 @@ def load_and_cache_examples(args, task, tokenizer, evaluate=False):
     else:
         logger.info("Creating features from dataset file at %s", args.data_dir)
         label_list = processor.get_labels()
-        examples = processor.get_dev_examples(args.data_dir) if evaluate else processor.get_train_examples(args.data_dir)
+        if predict:
+            examples = processor.get_test_examples(args.data_dir) 
+        elif evaluate:
+            examples = processor.get_dev_examples(args.data_dir)
+        else:
+            examples = processor.get_train_examples(args.data_dir)
         features = convert_examples_to_features(examples, label_list, args.max_seq_length, tokenizer, output_mode,
             cls_token_at_end=bool(args.model_type in ['xlnet']),            # xlnet has a cls token at the end
             cls_token=tokenizer.cls_token,
@@ -275,6 +348,7 @@ def load_and_cache_examples(args, task, tokenizer, evaluate=False):
     all_input_mask = torch.tensor(select_field(features, 'input_mask'), dtype=torch.long)
     all_segment_ids = torch.tensor(select_field(features, 'segment_ids'), dtype=torch.long)
     if output_mode == "classification":
+        # print([f.label for f in features])
         all_label_ids = torch.tensor([f.label for f in features], dtype=torch.long)
     elif output_mode == "regression":
         all_label_ids = torch.tensor([f.label for f in features], dtype=torch.float)
@@ -299,6 +373,8 @@ def main():
                         help="The output directory where the model predictions and checkpoints will be written.")
 
     ## Other parameters
+    parser.add_argument("--do_predict", action='store_true',
+                        help="Whether to run prediction.")
     parser.add_argument("--pop_layer",default=None, type=str,
                         help="pop layer")
     parser.add_argument("--config_name", default="", type=str,
@@ -474,8 +550,22 @@ def main():
             result = evaluate(args, model, tokenizer, prefix=global_step)
             result = dict((k + '_{}'.format(global_step), v) for k, v in result.items())
             results.update(result)
+        print(results)
 
-    return results
+     # Prediction
+    if args.do_predict and args.local_rank in [-1, 0]:
+        # print("predicting")
+        checkpoints = [args.output_dir]
+        if args.eval_all_checkpoints:
+            checkpoints = list(os.path.dirname(c) for c in sorted(glob.glob(args.output_dir + '/**/' + WEIGHTS_NAME, recursive=True)))
+            logging.getLogger("pytorch_transformers.modeling_utils").setLevel(logging.WARN)  # Reduce logging
+        logger.info("Evaluate the following checkpoints: %s", checkpoints)
+        for checkpoint in checkpoints:
+            global_step = checkpoint.split('-')[-1] if len(checkpoints) > 1 else ""
+            model = model_class.from_pretrained(checkpoint)
+            model.to(args.device)
+            # print("predicting")
+            preds = predict(args, model, tokenizer, prefix=global_step)
 
 
 if __name__ == "__main__":

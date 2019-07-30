@@ -135,7 +135,7 @@ class SwagProcessor():
                 ending_1 = line[8],
                 ending_2 = line[9],
                 ending_3 = line[10],
-                label = int(line[11]) if is_training else None
+                label = int(line[11]) if is_training else self.get_labels()[0]
             ) for line in lines[1:] # we skip the line with the column names
         ]
     

@@ -122,7 +122,7 @@ class CopaProcessor():
                 question = line["question"], 
                 choice0 = line["choice1"],
                 choice1 = line["choice2"],
-                label = int(line["label"]) if is_training else None
+                label = int(line["label"]) if is_training else self.get_labels()[0]
             ) for line in lines # we skip the line with the column names
         ]
     
