@@ -1,26 +1,35 @@
 #!/usr/bin/env bash
-# train_size =400  sum_batch_size = 16 steps_per_epoch =25  sum_steps= 480
+# train_size =400  sum_batch_size = 32 steps_per_epoch =13  epoch =10 sum_steps= 130
 
+BATCH_SIZE=32
+MAX_STEPS=130
+SAVE_STEPS=-1
+LOG_STEPS=10
+LR=1e-5
 
-CUDA_VISIBLE_DEVICES=0,2,3 python run_superglue.py \
-    --model_type=xlnet \
-    --model_name_or_path=./outputs/xlnet-large-cased-swag/checkpoint-27000 \
+for SEED in 3 7 42 50 87
+do 
+CUDA_VISIBLE_DEVICES=2 python run_superglue.py \
+    --model_type=bert \
+    --model_name_or_path=./outputs/bert-large-cased-swag/ \
     --do_train  \
     --do_eval   \
-    --save_steps=80 \
     --eval_all_checkpoints \
-    --logging_steps=10 \
-    --evaluate_during_training  \
-    --task_name=cb  \
+    --logging_steps=$LOG_STEPS \
+    --task_name=copa  \
     --data_dir=../data-superglue/COPA \
-    --output_dir=./outputs/copa25   \
+    --output_dir=./outputs/copa_bert/$BATCH_SIZE/$SEED   \
     --cache_dir=./cache \
     --max_seq_length=128   \
-    --per_gpu_eval_batch_size=8   \
-    --per_gpu_train_batch_size=8   \
-    --learning_rate=1e-5 \
-    --num_train_epochs=30.0
-    # --max_steps= 
+    --per_gpu_eval_batch_size=$BATCH_SIZE   \
+    --per_gpu_train_batch_size=$BATCH_SIZE   \
+    --learning_rate=$LR \
+    --pop_layer=classifier\
+    --max_steps=$MAX_STEPS \
+    --save_steps=$SAVE_STEPS \
+    --evaluate_during_training  \
+    --num_train_epochs=10.0 \
+    --seed=$SEED 
     # --tokenizer_name=xlnet_large_cased  \
     # --gradient_accumulation_steps=1 \
     # --max_steps=1200  \
@@ -29,5 +38,6 @@ CUDA_VISIBLE_DEVICES=0,2,3 python run_superglue.py \
     # --do_lower_case \
     # --overwrite_output_dir   \
     # --overwrite_cache \
-    --pop_classifier_layer  
+    # --pop_classifier_layer  
 
+done

@@ -9,4 +9,5 @@ cache/
 outputs/
 proc_data/
 runs/
+runs_old/
 logs/
