@@ -7,7 +7,7 @@ SAVE_STEPS=-1
 LOG_STEPS=10
 LR=1e-5
 
-for SEED in 3 7 42 50 87
+for SEED in 42
 do 
 CUDA_VISIBLE_DEVICES=2 python run_superglue.py \
     --model_type=bert \
@@ -18,7 +18,7 @@ CUDA_VISIBLE_DEVICES=2 python run_superglue.py \
     --logging_steps=$LOG_STEPS \
     --task_name=copa  \
     --data_dir=../data-superglue/COPA \
-    --output_dir=./outputs/copa_bert/$BATCH_SIZE/$SEED   \
+    --output_dir=./outputs/copa_bert_v2/$BATCH_SIZE/$SEED   \
     --cache_dir=./cache \
     --max_seq_length=128   \
     --per_gpu_eval_batch_size=$BATCH_SIZE   \
