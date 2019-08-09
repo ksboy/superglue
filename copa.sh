@@ -3,9 +3,9 @@
 
 for SEED in 3 7 42 50 87
 do 
-CUDA_VISIBLE_DEVICES=2,3 python run_superglue.py \
+CUDA_VISIBLE_DEVICES=0,3 python run_superglue.py \
     --model_type=xlnet \
-    --model_name_or_path=./outputs/xlnet-large-cased-swag/checkpoint-27000 \
+    --model_name_or_path=../superglue/outputs/xlnet-large-cased-swag/checkpoint-27000 \
     --do_train  \
     --do_eval   \
     --save_steps=-1 \
@@ -14,7 +14,7 @@ CUDA_VISIBLE_DEVICES=2,3 python run_superglue.py \
     --evaluate_during_training  \
     --task_name=copa  \
     --data_dir=../data-superglue/COPA \
-    --output_dir=./outputs/copa_bert/$SEED   \
+    --output_dir=./outputs/copa_xlnet/$SEED   \
     --cache_dir=./cache \
     --max_seq_length=128   \
     --per_gpu_eval_batch_size=16   \
