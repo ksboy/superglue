@@ -10,3 +10,4 @@ outputs/
 proc_data/
 runs/
 logs/
+log*
