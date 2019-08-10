@@ -11,3 +11,4 @@ proc_data/
 runs/
 runs_old/
 logs/
+log*
