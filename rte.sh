@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
-# train_size =2490  sum_batch_size = 32*2 steps_per_epoch =40 epoch =8 sum_steps= 320
+# train_size =2490  sum_batch_size = 32 steps_per_epoch =78 epoch =10 sum_steps= 780
 BATCH_SIZE=32
 # MAX_STEPS=320
-EPOCHS=8.0
+EPOCHS=10.0
 SAVE_STEPS=-1
-LOG_STEPS=20
+LOG_STEPS=40
 LR=1e-5
 
 for SEED in 3 7 42 50 87
 do 
-CUDA_VISIBLE_DEVICES=0,3 python run_superglue.py \
+CUDA_VISIBLE_DEVICES=2 python run_superglue.py \
     --model_type=bert \
     --model_name_or_path=../bert-large-cased-wwm-mnli/ \
     --do_train  \

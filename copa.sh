@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
-# train_size =400*2  sum_batch_size = 32 steps_per_epoch =25  epoch =12 sum_steps= 300
+# train_size =400  sum_batch_size = 16*2 steps_per_epoch =13  epoch =12 sum_steps= 156
 
-BATCH_SIZE=32
-# MAX_STEPS=350
+BATCH_SIZE=16
+# MAX_STEPS=300
 EPOCHS=12.0
 SAVE_STEPS=-1
-LOG_STEPS=20
+LOG_STEPS=13
 LR=1e-5
 
 for SEED in 3 7 42 50 87
 do 
-CUDA_VISIBLE_DEVICES=3 python run_superglue.py \
+CUDA_VISIBLE_DEVICES=2,3 python run_copa.py \
     --model_type=bert \
     --model_name_or_path=./outputs/bert-large-cased-swag/ \
     --do_train  \
@@ -19,7 +19,7 @@ CUDA_VISIBLE_DEVICES=3 python run_superglue.py \
     --logging_steps=$LOG_STEPS \
     --task_name=copa  \
     --data_dir=../data-superglue/COPA \
-    --output_dir=./outputs/copa_bert/$SEED   \
+    --output_dir=./outputs/copa2_bert/$SEED   \
     --cache_dir=./cache \
     --max_seq_length=128   \
     --per_gpu_eval_batch_size=$BATCH_SIZE   \
