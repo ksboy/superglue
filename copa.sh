@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# train_size =400*2  sum_batch_size = 16*2 steps_per_epoch =25  sum_steps= 300
+# train_size =400  sum_batch_size = 8*2 steps_per_epoch =25  sum_steps= 300
 
-BATCH_SIZE=16
+BATCH_SIZE=8
 # MAX_STEPS=300
 EPOCHS=12.0
 SAVE_STEPS=-1
@@ -10,7 +10,7 @@ LR=1e-5
 
 for SEED in 3 7 42 50 87
 do 
-CUDA_VISIBLE_DEVICES=2,3 python run_superglue.py \
+CUDA_VISIBLE_DEVICES=2,3 python run_copa.py \
     --model_type=xlnet \
     --model_name_or_path=../superglue/outputs/xlnet-large-cased-swag/checkpoint-27000 \
     --do_train  \
